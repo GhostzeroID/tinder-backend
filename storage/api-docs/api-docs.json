@@ -1,0 +1,280 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Tinder Backend API",
+        "description": "API Documentation untuk Tinder Backend Application",
+        "contact": {
+            "email": "admin@tinder-backend.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/like": {
+            "post": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Like or dislike a person",
+                "description": "Endpoint untuk memberikan like atau dislike kepada seseorang",
+                "operationId": "8b479b1b5c3d3be75b6093800e25fafa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Like"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/liked/{personId}": {
+            "get": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Get list of people that a person liked",
+                "description": "Mendapatkan daftar orang-orang yang di-like oleh seseorang",
+                "operationId": "46ec90809a7949dad8f0a6dd4b60d66b",
+                "parameters": [
+                    {
+                        "name": "personId",
+                        "in": "path",
+                        "description": "ID of the person",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Person"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Person not found"
+                    }
+                }
+            }
+        },
+        "/api/people": {
+            "get": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Get list of people with pagination",
+                "description": "Mendapatkan daftar semua orang yang tersedia dengan pagination",
+                "operationId": "b2985cc1b5ff63acae04676e8de27da8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Person"
+                                            }
+                                        },
+                                        "first_page_url": {
+                                            "type": "string"
+                                        },
+                                        "from": {
+                                            "type": "integer"
+                                        },
+                                        "last_page": {
+                                            "type": "integer"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string"
+                                        },
+                                        "path": {
+                                            "type": "string"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string"
+                                        },
+                                        "to": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Like": {
+                "title": "Like",
+                "description": "Model untuk data like/dislike",
+                "required": [
+                    "person_id",
+                    "target_id",
+                    "type"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "person_id": {
+                        "description": "ID orang yang memberikan like/dislike",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "target_id": {
+                        "description": "ID orang yang menerima like/dislike",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "like",
+                            "dislike"
+                        ],
+                        "example": "like"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Person": {
+                "title": "Person",
+                "description": "Model untuk data orang",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "age": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "pictures": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "photo1.jpg",
+                            "photo2.jpg"
+                        ]
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "Jakarta"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "People",
+            "description": "Endpoints untuk mengelola data orang"
+        },
+        {
+            "name": "Likes",
+            "description": "Endpoints untuk mengelola likes dan dislikes"
+        }
+    ]
+}
