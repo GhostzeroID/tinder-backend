@@ -148,10 +148,58 @@ For testing without sending real emails:
 MAIL_MAILER=log
 ```
 
-Test manually:
+### Testing the Notification System
+
+1. **Create test data with 50+ likes:**
+```bash
+php artisan tinker
+```
+
+Then run:
+```php
+// Create a person with 52 likes for testing
+$person = App\Models\Person::first();
+$others = App\Models\Person::where('id', '!=', $person->id)->get();
+
+$count = 0;
+foreach ($others as $other) {
+    for ($i = 0; $i < 6; $i++) {
+        App\Models\Like::create([
+            'person_id' => $other->id,
+            'target_id' => $person->id,
+            'type' => 'like'
+        ]);
+        $count++;
+        if ($count >= 52) break 2;
+    }
+}
+exit
+```
+
+2. **Run the notification command:**
 ```bash
 php artisan check:popular
 ```
+
+Expected output:
+```
+Checking for popular people...
+Total people in database: 10
+
+[ALERT] John Doe (ID: 1)
+   Likes received: 52
+   Status: Popular (threshold exceeded)
+   Email sent to: admin@example.com
+
+Total notification emails sent: 1
+```
+
+3. **Check the email log:**
+```bash
+tail -30 storage/logs/laravel.log
+```
+
+You should see the email notification with person details.
 
 ## Cronjob Setup (Production)
 
